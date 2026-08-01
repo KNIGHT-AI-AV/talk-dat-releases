@@ -1,0 +1,13 @@
+Copyright (c) 2026 Knight AI+AV. All rights reserved.
+
+This repository is a binary distribution surface. Talk Dat! installers,
+portable builds, artwork, and documentation are proprietary Knight AI+AV
+software except for separately identified third-party components.
+
+No permission is granted to copy, redistribute, modify, sublicense, resell,
+reverse engineer, or create derivative works except under a separate written
+agreement or where applicable law does not permit that restriction.
+
+Official binaries are licensed to authorized end users under the EULA bundled
+with the software. See https://talkdat.knightaiav.com/ for the official product
+and support channel.
