@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--
+    THESIS: Talk Dat! turns a held intention into finished text; the page behaves like the product instead of describing it from a generic app grid.
+    OWN-WORLD: Roman-clay black, bone white, ember red, warm gold, and deep cyan; full-scale Talk Stone and Pill materials; precise instrument typography.
+    STORY: Meet the product, try real speech, inspect the local-first contract, then download one verified Windows artifact.
+    FIRST VIEWPORT: Talk Dat! and its download sit at left, the Talk Stone occupies the right field, and the Pill spans the lower edge with the next section visible.
+    FORM: Persuade surface, transducer-console staging, first-ranked structure; the approved identity and direct brief make a concept seed unnecessary.
+    FINISH: verified on desktop and mobile with real interaction, release provenance, keyboard access, and reduced-motion behavior.
+  -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Talk Dat! is a trigger-only Windows dictation overlay with local voice-session protection, local or bring-your-own speech models, and a compact animated Pill.">
+  <meta property="og:title" content="Talk Dat!">
+  <meta property="og:description" content="Hold. Speak. Paste clean text anywhere on Windows.">
+  <meta property="og:image" content="https://talkdat.knightaiav.com/assets/talk-stone.png">
+  <meta name="theme-color" content="#080b0c">
+  <title>Talk Dat! | Speak into any Windows app</title>
+  <link rel="icon" href="assets/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/app-icon-180.png">
+  <style>
+    :root {
+      color-scheme: dark;
+      --black: #050708;
+      --ink: #0a0d0e;
+      --stone: #161819;
+      --stone-soft: #202222;
+      --bone: #f7f1e4;
+      --bone-muted: #c8bdab;
+      --gold: #ffd676;
+      --ember: #ff4a2f;
+      --red: #e80734;
+      --cyan: #24d9d1;
+      --cyan-deep: #087a85;
+      --line: rgba(247, 241, 228, 0.15);
+      --line-strong: rgba(36, 217, 209, 0.5);
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+      --display: "Bahnschrift", "Aptos Display", "Segoe UI Variable Display", sans-serif;
+      --body: "Aptos", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+      font-family: var(--body);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--black); }
+    body { margin: 0; color: var(--bone); background: var(--black) url("assets/roman-clay-material.png") center top / 1680px auto fixed; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button, textarea, select { font: inherit; }
+    img { display: block; max-width: 100%; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      color: var(--black);
+      background: var(--gold);
+      transform: translateY(-180%);
+      transition: transform 160ms ease-out;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+
+    .topbar {
+      position: fixed;
+      z-index: 30;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(5, 7, 8, 0.9);
+      border-bottom: 1px solid rgba(247, 241, 228, 0.1);
+      backdrop-filter: blur(18px) saturate(1.1);
+    }
+    .topbar-inner {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font: 700 1rem/1 var(--display); }
+    .brand img { width: 38px; height: 38px; border-radius: 10px; }
+    .nav { display: flex; align-items: center; gap: 4px; color: var(--bone-muted); font-size: 0.9rem; }
+    .nav a { padding: 9px 11px; }
+    .nav a:hover, .nav a:focus-visible { color: var(--bone); background: rgba(247, 241, 228, 0.07); outline: none; }
+
+    .hero {
+      min-height: min(820px, calc(100svh - 52px));
+      position: relative;
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+      isolation: isolate;
+      background: rgba(8, 13, 14, 0.9);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      width: min(760px, 62vw);
+      height: min(760px, 62vw);
+      right: -5vw;
+      top: 50%;
+      transform: translateY(-52%);
+      background: url("assets/talk-stone.webp") center / contain no-repeat;
+      filter: drop-shadow(0 48px 76px rgba(0, 0, 0, 0.7));
+      opacity: 0.96;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: auto -7vw 1.5vh 27vw;
+      height: clamp(72px, 12vw, 152px);
+      background: url("assets/the-pill.webp") center / 100% 100% no-repeat;
+      filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 24px rgba(36, 217, 209, 0.16));
+      opacity: 0.78;
+    }
+    .hero-copy { width: min(680px, 60vw); padding: 118px 0 130px; }
+    .hero h1 {
+      margin: 0;
+      font: 760 clamp(4.3rem, 10vw, 8.5rem)/1.02 var(--display);
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+    .hero-lead {
+      width: min(620px, 100%);
+      margin: 28px 0 0;
+      color: var(--bone-muted);
+      font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+      line-height: 1.48;
+      text-wrap: balance;
+    }
+    .hero-lead strong { color: var(--bone); font-weight: 650; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+
+    .button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 17px;
+      border: 0;
+      border-radius: 6px;
+      color: var(--bone);
+      background: rgba(247, 241, 228, 0.09);
+      box-shadow: inset 0 0 0 1px rgba(247, 241, 228, 0.16);
+      cursor: pointer;
+      font-weight: 690;
+      transition: transform 160ms ease-out, background 160ms ease-out, box-shadow 160ms ease-out;
+    }
+    .button:hover { transform: translateY(-1px); background: rgba(247, 241, 228, 0.14); }
+    .button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .button.primary { color: #10100d; background: var(--gold); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24); }
+    .button.primary:hover { background: #ffe39a; }
+    .button.recording { color: var(--bone); background: var(--red); box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3); }
+    .button[disabled] { opacity: 0.52; cursor: wait; transform: none; }
+    .button.small { min-height: 38px; padding: 8px 12px; font-size: 0.88rem; }
+
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 28px; color: var(--bone-muted); font-size: 0.88rem; }
+    .hero-meta span::before { content: ""; width: 6px; height: 6px; display: inline-block; margin: 0 8px 1px 0; background: var(--cyan); border-radius: 50%; }
+
+    .statement {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--bone);
+      color: var(--ink);
+    }
+    .statement-inner { min-height: 250px; display: grid; grid-template-columns: 0.72fr 1.28fr; align-items: center; gap: 7vw; padding: 58px 0; }
+    .statement-mark { width: clamp(88px, 15vw, 168px); filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.17)); }
+    .statement h2 { margin: 0; max-width: 820px; font: 700 clamp(2.2rem, 5vw, 4.7rem)/1.02 var(--display); letter-spacing: 0; text-wrap: balance; }
+
+    section { position: relative; }
+    .section-head { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 9vw; align-items: end; margin-bottom: 44px; }
+    .section-head h2 { margin: 0; font: 730 clamp(2.35rem, 5vw, 4.9rem)/1.02 var(--display); letter-spacing: 0; text-wrap: balance; }
+    .section-head p { max-width: 66ch; margin: 0; color: var(--bone-muted); font-size: 1.08rem; line-height: 1.65; }
+
+    .demo { padding: 110px 0; background: rgba(8, 11, 12, 0.94); overflow: hidden; }
+    .demo-stage {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      grid-template-columns: 1.03fr 0.97fr;
+      background: #0d1112;
+      border: 1px solid rgba(247, 241, 228, 0.14);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .demo-voice {
+      position: relative;
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 48px;
+      background: #070a0b;
+      border-right: 1px solid var(--line);
+    }
+    .demo-pill-shell {
+      width: min(440px, 86%);
+      aspect-ratio: 960 / 174;
+      position: relative;
+      transform: scaleX(1);
+      filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.7));
+      transition: transform 330ms cubic-bezier(0.16, 1, 0.3, 1), filter 180ms ease-out;
+    }
+    .demo-pill-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("assets/the-pill.webp") center / 100% 100% no-repeat;
+    }
+    .demo-pill-shell.listening { transform: scaleX(1.13); filter: drop-shadow(0 20px 21px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 23px rgba(36, 217, 209, 0.42)); }
+    .demo-pill-shell.listening::before { animation: pill-breathe 1.6s ease-in-out infinite; }
+    .demo-pill-shell.processing::before { filter: saturate(1.7) brightness(1.2); }
+    .demo-pill-shell.processing { filter: drop-shadow(0 0 28px rgba(255, 214, 118, 0.45)); }
+    @keyframes pill-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.045); } }
+
+    .meter {
+      width: min(430px, 84%);
+      height: 72px;
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .meter span {
+      width: 3px;
+      height: 66px;
+      background: var(--cyan);
+      transform: skewY(-18deg) scaleY(0.06);
+      transform-origin: center;
+      opacity: 0.26;
+      transition: transform 55ms linear, opacity 55ms linear, background 120ms ease-out;
+    }
+    .demo-readout { width: min(500px, 100%); margin-top: 8px; display: flex; justify-content: space-between; gap: 20px; color: var(--bone-muted); font-size: 0.85rem; }
+    .demo-readout strong { color: var(--bone); font-weight: 650; }
+    .demo-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 26px; }
+    .hold-hint { margin: 13px 0 0; color: #9e9587; font-size: 0.83rem; }
+
+    .transcript-pane { min-width: 0; display: flex; flex-direction: column; padding: 42px; }
+    .transcript-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .transcript-top h3 { margin: 0; font: 680 1.35rem/1.1 var(--display); }
+    .source-badge { color: var(--cyan); font-size: 0.8rem; }
+    .transcript-output {
+      min-height: 230px;
+      flex: 1;
+      margin: 26px 0 22px;
+      color: var(--bone);
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .transcript-output.empty { color: #817b70; }
+    .interim { color: var(--bone-muted); }
+    .transcript-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .privacy-note { margin: 18px 0 0; color: #928a7d; font-size: 0.78rem; line-height: 1.5; }
+
+    .download { padding: 112px 0; color: var(--ink); background: var(--bone); }
+    .download .section-head p { color: #5c584f; }
+    .download-stage { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 7vw; align-items: center; }
+    .download-visual { position: relative; min-height: 430px; display: grid; place-items: center; }
+    .download-visual img { position: relative; width: min(440px, 82vw); filter: drop-shadow(0 32px 34px rgba(0, 0, 0, 0.25)); }
+    .download-copy h3 { margin: 0; font: 720 clamp(2rem, 4.2vw, 3.8rem)/1.02 var(--display); letter-spacing: 0; }
+    .download-copy > p { margin: 20px 0 0; color: #5c584f; line-height: 1.65; }
+    .download-copy .button.primary { margin-top: 28px; background: var(--ink); color: var(--bone); box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18); }
+    .release-status { min-height: 44px; margin: 17px 0 0; color: #5c584f; font-size: 0.83rem; line-height: 1.5; overflow-wrap: anywhere; }
+    .integrity-links { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 16px; font-size: 0.82rem; font-weight: 650; }
+    .integrity-links a { text-decoration: underline; text-decoration-color: rgba(8, 13, 14, 0.35); text-underline-offset: 3px; }
+
+    .platform-list { margin-top: 56px; border-top: 1px solid rgba(8, 13, 14, 0.18); }
+    .platform-row { display: grid; grid-template-columns: 180px 1fr auto; gap: 24px; align-items: center; padding: 21px 0; border-bottom: 1px solid rgba(8, 13, 14, 0.18); }
+    .platform-row strong { font-family: var(--display); }
+    .platform-row p { margin: 0; color: #5c584f; line-height: 1.45; }
+    .platform-state { font-size: 0.8rem; font-weight: 750; text-transform: uppercase; color: #47615d; }
+
+    .proof { padding: 112px 0; background: rgba(8, 31, 28, 0.88); }
+    .proof-list { border-top: 1px solid var(--line); }
+    .proof-row { display: grid; grid-template-columns: minmax(220px, 0.7fr) 1.3fr; gap: 8vw; padding: 38px 0; border-bottom: 1px solid var(--line); }
+    .proof-row h3 { margin: 0; font: 670 clamp(1.4rem, 2.7vw, 2.2rem)/1.12 var(--display); }
+    .proof-row p { max-width: 72ch; margin: 0; color: var(--bone-muted); line-height: 1.7; }
+
+    .gallery { padding: 100px 0; background: rgba(29, 6, 12, 0.88); }
+    .gallery-track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .gallery figure { margin: 0; background: #121718; border-radius: 8px; overflow: hidden; }
+    .gallery img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+    .gallery figcaption { padding: 16px 17px 19px; color: var(--bone-muted); line-height: 1.48; font-size: 0.9rem; }
+
+    .close { min-height: 520px; display: grid; place-items: center; text-align: center; overflow: hidden; background: var(--bone); color: var(--ink); }
+    .close-inner { padding: 88px 0; }
+    .close h2 { margin: 0 auto; max-width: 850px; font: 740 clamp(3rem, 7vw, 6rem)/1 var(--display); letter-spacing: 0; text-wrap: balance; }
+    .close p { max-width: 640px; margin: 24px auto 0; color: #5c584f; font-size: 1.08rem; line-height: 1.6; }
+    .close .button { margin-top: 30px; background: var(--ink); color: var(--bone); }
+
+    footer { color: var(--bone-muted); background: #050708; border-top: 1px solid var(--line); }
+    footer .shell { min-height: 104px; display: flex; align-items: center; justify-content: space-between; gap: 28px; font-size: 0.86rem; }
+    footer a { color: var(--bone); }
+
+    @media (max-width: 860px) {
+      .shell { width: min(100% - 28px, 720px); }
+      .nav a:not(.nav-download) { display: none; }
+      .hero { min-height: min(720px, calc(100svh - 48px)); align-items: start; }
+      .hero::before { width: min(520px, 92vw); height: min(520px, 92vw); right: -28vw; top: 43%; opacity: 0.64; }
+      .hero::after { left: 8vw; right: -18vw; bottom: 28px; height: 92px; }
+      .hero-copy { width: 86%; padding: 128px 0 180px; }
+      .hero h1 { font-size: clamp(4rem, 20vw, 7rem); }
+      .hero-lead { font-size: 1.1rem; }
+      .statement-inner, .section-head, .download-stage, .proof-row { grid-template-columns: 1fr; gap: 28px; }
+      .statement-inner { min-height: 0; }
+      .statement-mark { width: 96px; }
+      .section-head { margin-bottom: 32px; }
+      .demo, .download, .proof, .gallery { padding: 78px 0; }
+      .demo-stage { grid-template-columns: 1fr; }
+      .demo-voice { min-height: 390px; border-right: 0; border-bottom: 1px solid var(--line); padding: 34px 20px; }
+      .transcript-pane { min-height: 430px; padding: 28px 22px; }
+      .platform-row { grid-template-columns: 1fr auto; gap: 8px 16px; }
+      .platform-row p { grid-column: 1 / -1; }
+      .gallery-track { grid-template-columns: 1fr; }
+      .gallery figure { display: grid; grid-template-columns: minmax(120px, 0.7fr) 1fr; align-items: center; }
+      .gallery img { aspect-ratio: 3 / 4; }
+      footer .shell { padding: 28px 0; align-items: flex-start; flex-direction: column; }
+    }
+
+    @media (max-width: 520px) {
+      .brand span { display: none; }
+      .hero-copy { width: 100%; }
+      .hero h1 { font-size: clamp(3.8rem, 21vw, 6rem); }
+      .hero-actions .button { width: 100%; }
+      .hero-meta { display: grid; gap: 8px; }
+      .demo-pill-shell { width: 84%; }
+      .demo-readout { flex-direction: column; gap: 5px; text-align: center; }
+      .demo-controls .button { width: 100%; }
+      .transcript-actions .button { flex: 1; }
+      .platform-row { grid-template-columns: 1fr; }
+      .platform-state { justify-self: start; }
+      .gallery figure { display: block; }
+      .gallery img { aspect-ratio: 3 / 4; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body data-deepgram-token-endpoint="">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#top" aria-label="Talk Dat! home">
+        <img src="assets/favicon.png" alt="">
+        <span>Talk Dat!</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#try">Try it</a>
+        <a href="#privacy">How it works</a>
+        <a class="nav-download" href="#download">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" id="top">
+      <div class="shell">
+        <div class="hero-copy">
+          <h1>Talk Dat!</h1>
+          <p class="hero-lead"><strong>Hold. Speak. Paste clean text anywhere on Windows.</strong> A tiny trigger-only dictation surface with local voice-session protection and your choice of speech model.</p>
+          <div class="hero-actions">
+            <a class="button primary" id="heroDownload" href="#download">Download for Windows</a>
+            <a class="button" href="#try">Try live transcription</a>
+          </div>
+          <div class="hero-meta" aria-label="Product highlights">
+            <span>Knight AI+AV product</span>
+            <span>Windows 10 and 11</span>
+            <span>Mic off until triggered</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="statement" aria-label="Product promise">
+      <div class="shell statement-inner">
+        <img class="statement-mark" src="assets/talk-stone.webp" alt="Talk Dat! Talk Stone app icon">
+        <h2>Dictation should feel present when you need it and disappear when you do not.</h2>
+      </div>
+    </section>
+
+    <section class="demo" id="try">
+      <div class="shell">
+        <header class="section-head">
+          <h2>Say something real.</h2>
+          <p>This is a functioning browser transcription preview, not a canned animation. Hold the button, speak, and release. The Windows app adds global hotkeys, automatic insertion, protected recordings, local models, and richer formatting.</p>
+        </header>
+
+        <div class="demo-stage">
+          <div class="demo-voice">
+            <div id="demoPill" class="demo-pill-shell" aria-hidden="true"></div>
+            <div class="meter" id="meter" aria-hidden="true"></div>
+            <div class="demo-readout" aria-live="polite">
+              <strong id="demoState">Ready when you are</strong>
+              <span id="micState">Microphone is off</span>
+            </div>
+            <div class="demo-controls">
+              <button class="button primary" type="button" id="holdToTalk">Hold to talk</button>
+              <button class="button" type="button" id="toggleDemo">Hands-free</button>
+              <button class="button small" type="button" id="stopDemo" disabled>Stop</button>
+            </div>
+            <p class="hold-hint">Nothing records until you hold or toggle. Release always stops hold-to-talk.</p>
+          </div>
+
+          <div class="transcript-pane">
+            <div class="transcript-top">
+              <h3>Live transcript</h3>
+              <span class="source-badge" id="transcriptionSource">Waiting</span>
+            </div>
+            <div id="transcriptOutput" class="transcript-output empty" aria-live="polite">Your words will appear here.</div>
+            <div class="transcript-actions">
+              <button class="button small" type="button" id="copyTranscript" disabled>Copy text</button>
+              <button class="button small" type="button" id="clearTranscript">Clear</button>
+            </div>
+            <p class="privacy-note">Browser preview: audio is handled by the active speech service and is never saved by this page. The installed app can use its bundled local model without an API key. Deepgram preview activates only through a short-lived server token; the project key is never sent to this page.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <div class="shell">
+        <header class="section-head">
+          <h2>One install. Then just speak.</h2>
+          <p>The installer creates the app shortcut, keeps updates inside Talk Dat!, and preserves your private local settings between releases. New users can start with the bundled local model or add their own cloud provider.</p>
+        </header>
+        <div class="download-stage">
+          <div class="download-visual">
+            <img src="assets/talk-stone.webp" alt="Talk Dat! app icon, the Talk Stone">
+          </div>
+          <div class="download-copy">
+            <h3>Talk Dat! for Windows</h3>
+            <p>The recommended installer for 64-bit Windows 10 and 11. The current public beta is unsigned, so Windows SmartScreen may ask you to confirm the publisher before installation.</p>
+            <a class="button primary" id="installerDownload" href="https://github.com/KNIGHT-AI-AV/talk-dat-releases/releases">Download verified installer</a>
+            <p id="releaseStatus" class="release-status" role="status" aria-live="polite">Finding the newest verified Windows build...</p>
+            <div class="integrity-links">
+              <a id="portableDownload" href="https://github.com/KNIGHT-AI-AV/talk-dat-releases/releases">Portable ZIP</a>
+              <a id="checksumDownload" href="https://github.com/KNIGHT-AI-AV/talk-dat-releases/releases">SHA256 checksums</a>
+              <a id="receiptDownload" href="https://github.com/KNIGHT-AI-AV/talk-dat-releases/releases">Build receipt</a>
+              <a href="mailto:Build@KnightAIAV.com">Product support</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="platform-list" aria-label="Platform availability">
+          <div class="platform-row">
+            <strong>Windows</strong>
+            <p>Full overlay, global hotkeys, auto-paste, local history, protected voice sessions, updater, local and cloud speech routes.</p>
+            <span class="platform-state">Available</span>
+          </div>
+          <div class="platform-row">
+            <strong>macOS</strong>
+            <p>Native hotkeys, accessibility permissions, menu-bar behavior, signing, and notarization still require implementation and physical-device verification.</p>
+            <span class="platform-state">Planned</span>
+          </div>
+          <div class="platform-row">
+            <strong>Linux</strong>
+            <p>X11 and Wayland need separate overlay, shortcut, tray, and simulated-input verification before a public package is honest.</p>
+            <span class="platform-state">Planned</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof" id="privacy">
+      <div class="shell">
+        <header class="section-head">
+          <h2>Built around the moment between speech and text.</h2>
+          <p>Talk Dat! is a local Windows interaction tool, not a cloud account or remote audio archive. The desktop contract remains small, explicit, and recoverable.</p>
+        </header>
+        <div class="proof-list">
+          <article class="proof-row">
+            <h3>No trigger, no recording.</h3>
+            <p>The Pill can remain visible while the microphone, provider connection, and usage billing remain idle. Hold-to-talk ends when you release; hands-free is always an explicit separate action.</p>
+          </article>
+          <article class="proof-row">
+            <h3>Your last five holds survive failure.</h3>
+            <p>Each accepted voice session is written locally before transcription, formatting, clipboard, or insertion can fail. History can replay or recover the protected recording instead of silently losing a long thought.</p>
+          </article>
+          <article class="proof-row">
+            <h3>Use local speech or bring your own provider.</h3>
+            <p>New users can run the bundled no-key local route. Deepgram Nova-3, OpenAI, ElevenLabs, AssemblyAI, Gemini, Groq, Mistral, Soniox, xAI, Smallest.ai, and compatible endpoints remain user-selectable.</p>
+          </article>
+          <article class="proof-row">
+            <h3>Rough speech becomes usable writing.</h3>
+            <p>Punctuation, capitalization, leading spaces, dictionary terms, snippets, conservative cleanup, explicit transforms, local history, and scratchpad tabs continue after transcription lands.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery" aria-label="Talk Dat! product story">
+      <div class="shell">
+        <div class="gallery-track">
+          <figure>
+            <img src="assets/card-01.webp" alt="Talk Dat! Pill and product introduction">
+            <figcaption>The Pill stays compact at rest, grows when active, and reacts to real microphone energy.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/card-04.webp" alt="Talk Dat! trigger-only privacy explanation">
+            <figcaption>Activation is intentional: the idle overlay is not an open microphone.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/card-06.webp" alt="Talk Dat! dictation cleanup example">
+            <figcaption>Speech can become structured text before it enters the app you are already using.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <div class="shell close-inner">
+        <h2>Put your voice where the cursor is.</h2>
+        <p>Download the Windows public beta, choose local speech or connect your provider, then hold Ctrl + Windows whenever you want to write.</p>
+        <a class="button" id="closingDownload" href="#download">Download Talk Dat!</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>Talk Dat! is proprietary software by Knight AI+AV.</span>
+      <span><a href="https://knightaiav.com">Knight AI+AV</a> &nbsp; <a href="mailto:Build@KnightAIAV.com">Build@KnightAIAV.com</a></span>
+    </div>
+  </footer>
+
+  <script>
+    const releaseStatus = document.getElementById("releaseStatus");
+    const releaseRepository = "KNIGHT-AI-AV/talk-dat-releases";
+    const releasePage = `https://github.com/${releaseRepository}/releases`;
+    const releaseAssets = {
+      "Talk-Dat-Setup.exe": document.getElementById("installerDownload"),
+      "Talk-Dat-Windows-Portable.zip": document.getElementById("portableDownload"),
+      "SHA256SUMS.txt": document.getElementById("checksumDownload"),
+      "RELEASE-RECEIPT.json": document.getElementById("receiptDownload")
+    };
+
+    function compareReleaseTags(leftTag, rightTag) {
+      const parse = (tag) => {
+        const [core = "0", prerelease = ""] = String(tag || "").replace(/^v/i, "").split("-", 2);
+        return { numbers: core.split(".").map((part) => Number.parseInt(part, 10) || 0), prereleaseParts: prerelease ? prerelease.split(".") : [] };
+      };
+      const left = parse(leftTag);
+      const right = parse(rightTag);
+      const count = Math.max(left.numbers.length, right.numbers.length);
+      for (let index = 0; index < count; index += 1) {
+        const delta = (left.numbers[index] || 0) - (right.numbers[index] || 0);
+        if (delta) return delta;
+      }
+      if (!left.prereleaseParts.length && right.prereleaseParts.length) return 1;
+      if (left.prereleaseParts.length && !right.prereleaseParts.length) return -1;
+      const rank = { alpha: 0, beta: 1, rc: 2 };
+      const prereleaseCount = Math.max(left.prereleaseParts.length, right.prereleaseParts.length);
+      for (let index = 0; index < prereleaseCount; index += 1) {
+        const leftPart = left.prereleaseParts[index];
+        const rightPart = right.prereleaseParts[index];
+        if (leftPart === rightPart) continue;
+        if (leftPart === undefined) return -1;
+        if (rightPart === undefined) return 1;
+        const leftNumber = /^\d+$/.test(leftPart) ? Number(leftPart) : null;
+        const rightNumber = /^\d+$/.test(rightPart) ? Number(rightPart) : null;
+        if (leftNumber !== null && rightNumber !== null) return leftNumber - rightNumber;
+        if (leftNumber !== null) return -1;
+        if (rightNumber !== null) return 1;
+        const leftRank = rank[leftPart] ?? -1;
+        const rightRank = rank[rightPart] ?? -1;
+        if (leftRank !== rightRank) return leftRank - rightRank;
+        return leftPart.localeCompare(rightPart);
+      }
+      return 0;
+    }
+
+    function verifyReleaseProvenance(release, assets, receipt) {
+      const installer = assets.get("Talk-Dat-Setup.exe");
+      const sha256 = String(installer?.digest || "").replace(/^sha256:/i, "").toLowerCase();
+      const size = Number(installer?.size || 0);
+      const commit = String(receipt?.commit || "").toLowerCase();
+      const receiptAsset = Array.isArray(receipt?.assets) ? receipt.assets.find((asset) => asset?.name === "Talk-Dat-Setup.exe") : null;
+      const receiptSha256 = String(receiptAsset?.sha256 || "").replace(/^sha256:/i, "").toLowerCase();
+      const receiptSize = Number(receiptAsset?.size_bytes || 0);
+      if (
+        !installer || receipt?.repository !== releaseRepository || receipt?.tag !== release.tag_name ||
+        !Number.isSafeInteger(size) || size <= 0 || size !== receiptSize ||
+        !/^[a-f0-9]{40}$/.test(commit) || !/^[a-f0-9]{64}$/.test(sha256) || sha256 !== receiptSha256
+      ) throw new Error("Exact release provenance unavailable");
+      return { commit, sha256, size };
+    }
+
+    fetch(`https://api.github.com/repos/${releaseRepository}/releases?per_page=15`)
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("No public release found yet")))
+      .then((releases) => {
+        const release = releases.filter((candidate) => {
+          if (candidate.draft || !Array.isArray(candidate.assets)) return false;
+          const names = new Set(candidate.assets.map((asset) => asset.name));
+          return names.has("Talk-Dat-Setup.exe") && names.has("SHA256SUMS.txt");
+        }).sort((left, right) => compareReleaseTags(right.tag_name, left.tag_name))[0];
+        if (!release) throw new Error("No downloadable Windows release found yet");
+        const assets = new Map(release.assets.map((asset) => [asset.name, asset]));
+        Object.entries(releaseAssets).forEach(([name, link]) => { link.href = assets.get(name)?.browser_download_url || release.html_url || releasePage; });
+        [document.getElementById("heroDownload"), document.getElementById("closingDownload")].forEach((link) => { link.href = assets.get("Talk-Dat-Setup.exe")?.browser_download_url || release.html_url || releasePage; });
+        const date = release.published_at ? new Date(release.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "latest";
+        const channel = release.prerelease ? "public beta" : "stable";
+        const baseline = `${release.tag_name || release.name || "Latest build"} ${channel}, published ${date}.`;
+        releaseStatus.textContent = `${baseline} Verifying build receipt and installer digest...`;
+        const receiptUrl = assets.get("RELEASE-RECEIPT.json")?.browser_download_url;
+        if (!receiptUrl) throw new Error("Release receipt unavailable");
+        return fetch(receiptUrl)
+          .then((response) => response.ok ? response.json() : Promise.reject(new Error("Release receipt unavailable")))
+          .then((receipt) => {
+            const provenance = verifyReleaseProvenance(release, assets, receipt);
+            releaseStatus.textContent = `${baseline} Verified build ${provenance.commit.slice(0, 12)} | ${provenance.size.toLocaleString()} bytes | SHA256 ${provenance.sha256}.`;
+          });
+      })
+      .catch(() => {
+        Object.values(releaseAssets).forEach((link) => { link.href = releasePage; });
+        releaseStatus.textContent = "Direct verification is temporarily unavailable. Please wait before downloading so the official receipt can be checked.";
+      });
+
+    const demoPill = document.getElementById("demoPill");
+    const holdToTalk = document.getElementById("holdToTalk");
+    const toggleDemo = document.getElementById("toggleDemo");
+    const stopDemo = document.getElementById("stopDemo");
+    const demoState = document.getElementById("demoState");
+    const micState = document.getElementById("micState");
+    const transcriptOutput = document.getElementById("transcriptOutput");
+    const sourceLabel = document.getElementById("transcriptionSource");
+    const copyTranscript = document.getElementById("copyTranscript");
+    const clearTranscript = document.getElementById("clearTranscript");
+    const meter = document.getElementById("meter");
+    const meterBars = Array.from({ length: 42 }, () => {
+      const bar = document.createElement("span");
+      meter.appendChild(bar);
+      return bar;
+    });
+    const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const DEEPGRAM_TOKEN_ENDPOINT = document.body.dataset.deepgramTokenEndpoint || "";
+    let audioContext;
+    let analyser;
+    let micAnimation;
+    let micStream;
+    let micSource;
+    let recognition;
+    let recorder;
+    let deepgramSocket;
+    let finalTranscript = "";
+    let interimTranscript = "";
+    let sessionMode = "";
+    let handsFree = false;
+    let starting = false;
+    let micStartEpoch = 0;
+    let phaseResetTimer;
+
+    function renderTranscript() {
+      const complete = finalTranscript.trim();
+      const partial = interimTranscript.trim();
+      transcriptOutput.classList.toggle("empty", !complete && !partial);
+      transcriptOutput.innerHTML = !complete && !partial
+        ? "Your words will appear here."
+        : `${escapeHtml(complete)}${complete && partial ? " " : ""}<span class="interim">${escapeHtml(partial)}</span>`;
+      copyTranscript.disabled = !complete;
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+    }
+
+    function setDemoPhase(phase, detail) {
+      demoPill.classList.toggle("listening", phase === "listening");
+      demoPill.classList.toggle("processing", phase === "processing");
+      holdToTalk.classList.toggle("recording", phase === "listening" && !handsFree);
+      holdToTalk.textContent = phase === "listening" && !handsFree ? "Release to finish" : "Hold to talk";
+      toggleDemo.classList.toggle("recording", phase === "listening" && handsFree);
+      toggleDemo.textContent = handsFree && phase === "listening" ? "End hands-free" : "Hands-free";
+      stopDemo.disabled = phase === "idle";
+      demoState.textContent = phase === "listening" ? "Listening" : phase === "starting" ? "Starting securely" : phase === "processing" ? "Finishing transcript" : phase === "error" ? "Could not start" : "Ready when you are";
+      micState.textContent = detail || (phase === "idle" ? "Microphone is off" : "");
+    }
+
+    function drawMicMeter() {
+      if (!analyser) return;
+      const data = new Uint8Array(analyser.fftSize);
+      analyser.getByteTimeDomainData(data);
+      for (let index = 0; index < meterBars.length; index += 1) {
+        const sampleIndex = Math.floor(index * data.length / meterBars.length);
+        const centered = Math.abs(data[sampleIndex] - 128) / 128;
+        const scale = Math.max(0.06, Math.min(1, centered * 1.52));
+        meterBars[index].style.transform = `skewY(-18deg) scaleY(${scale})`;
+        meterBars[index].style.opacity = `${Math.max(0.24, Math.min(1, centered * 2.6))}`;
+        meterBars[index].style.background = index % 3 === 0 && centered > 0.3 ? "var(--gold)" : "var(--cyan)";
+      }
+      micAnimation = requestAnimationFrame(drawMicMeter);
+    }
+
+    async function startMeter(stream) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      audioContext = new AudioContextClass();
+      micSource = audioContext.createMediaStreamSource(stream);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.58;
+      micSource.connect(analyser);
+      drawMicMeter();
+    }
+
+    function stopMeter() {
+      if (micAnimation) cancelAnimationFrame(micAnimation);
+      micAnimation = undefined;
+      if (micSource) micSource.disconnect();
+      micSource = undefined;
+      if (analyser) analyser.disconnect();
+      analyser = undefined;
+      if (audioContext && audioContext.state !== "closed") void audioContext.close();
+      audioContext = undefined;
+      meterBars.forEach((bar) => { bar.style.transform = "skewY(-18deg) scaleY(0.06)"; bar.style.opacity = "0.24"; });
+    }
+
+    function mergeFinalTranscript(text) {
+      const cleaned = String(text || "").trim();
+      if (!cleaned) return;
+      finalTranscript = [finalTranscript.trim(), cleaned].filter(Boolean).join(" ");
+      interimTranscript = "";
+      renderTranscript();
+    }
+
+    async function fetchDeepgramGrant() {
+      if (!DEEPGRAM_TOKEN_ENDPOINT) throw new Error("deepgram_bridge_unconfigured");
+      const response = await fetch(DEEPGRAM_TOKEN_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Talk-Dat-Demo": "web-preview-v1" },
+        body: JSON.stringify({ purpose: "talk_dat_browser_preview" }),
+        credentials: "omit",
+        cache: "no-store"
+      });
+      if (!response.ok) throw new Error("deepgram_bridge_unavailable");
+      const payload = await response.json();
+      const token = payload.access_token || payload.token;
+      if (!token) throw new Error("deepgram_token_missing");
+      return { token, options: payload.options || {} };
+    }
+
+    function buildDeepgramUrl(options = {}) {
+      const defaults = { model: "nova-3", language: "en-US", smart_format: true, punctuate: true, interim_results: true, endpointing: 300, utterance_end_ms: 1000, vad_events: true };
+      const params = new URLSearchParams();
+      Object.entries({ ...defaults, ...options }).forEach(([key, value]) => { if (value !== undefined && value !== null && value !== "") params.set(key, String(value)); });
+      return `wss://api.deepgram.com/v1/listen?${params.toString()}`;
+    }
+
+    async function startDeepgramTranscription(stream) {
+      if (!window.MediaRecorder || !DEEPGRAM_TOKEN_ENDPOINT) return false;
+      const grant = await fetchDeepgramGrant();
+      const mimeTypes = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"];
+      const mimeType = mimeTypes.find((candidate) => MediaRecorder.isTypeSupported(candidate)) || "";
+      if (!mimeType) return false;
+      return new Promise((resolve, reject) => {
+        const socket = new WebSocket(buildDeepgramUrl(grant.options), ["bearer", grant.token]);
+        const timeout = window.setTimeout(() => { socket.close(); reject(new Error("deepgram_open_timeout")); }, 5000);
+        socket.onopen = () => {
+          window.clearTimeout(timeout);
+          deepgramSocket = socket;
+          recorder = new MediaRecorder(stream, { mimeType });
+          recorder.ondataavailable = (event) => { if (event.data?.size && socket.readyState === WebSocket.OPEN) socket.send(event.data); };
+          recorder.start(160);
+          sessionMode = "deepgram";
+          sourceLabel.textContent = "Deepgram Nova-3";
+          resolve(true);
+        };
+        socket.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            const alternative = message.channel?.alternatives?.[0];
+            const text = String(alternative?.transcript || "").trim();
+            if (!text) return;
+            if (message.is_final) mergeFinalTranscript(text);
+            else { interimTranscript = text; renderTranscript(); }
+          } catch (_) { }
+        };
+        socket.onerror = () => reject(new Error("deepgram_socket_error"));
+        socket.onclose = () => { deepgramSocket = undefined; };
+      });
+    }
+
+    function startBrowserTranscription() {
+      if (!SpeechRecognitionClass) return false;
+      recognition = new SpeechRecognitionClass();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
+      recognition.onresult = (event) => {
+        let freshFinal = "";
+        let freshInterim = "";
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+          const text = event.results[index][0]?.transcript || "";
+          if (event.results[index].isFinal) freshFinal += text;
+          else freshInterim += text;
+        }
+        if (freshFinal.trim()) mergeFinalTranscript(freshFinal);
+        interimTranscript = freshInterim.trim();
+        renderTranscript();
+      };
+      recognition.onerror = (event) => {
+        if (event.error !== "aborted" && event.error !== "no-speech") setDemoPhase("error", `Speech service: ${event.error}`);
+      };
+      recognition.onend = () => {
+        if (micStream && handsFree && sessionMode === "browser") {
+          try { recognition.start(); } catch (_) { }
+        }
+      };
+      recognition.start();
+      sessionMode = "browser";
+      sourceLabel.textContent = "Browser speech service";
+      return true;
+    }
+
+    async function startMic(options = {}) {
+      if (micStream || starting) return;
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setDemoPhase("error", "This browser does not provide microphone access");
+        return;
+      }
+      if (phaseResetTimer) window.clearTimeout(phaseResetTimer);
+      phaseResetTimer = undefined;
+      starting = true;
+      const requestEpoch = ++micStartEpoch;
+      handsFree = Boolean(options.handsFree);
+      setDemoPhase("starting", "Requesting microphone permission");
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+        if (requestEpoch !== micStartEpoch) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        micStream = stream;
+        await startMeter(stream);
+        if (requestEpoch !== micStartEpoch) {
+          stopMic();
+          return;
+        }
+        let started = false;
+        try { started = await startDeepgramTranscription(stream); } catch (_) { started = false; }
+        if (requestEpoch !== micStartEpoch) {
+          stopMic();
+          return;
+        }
+        if (!started) started = startBrowserTranscription();
+        if (!started) throw new Error("No supported browser speech service is available");
+        setDemoPhase("listening", handsFree ? "Hands-free browser preview is active" : "Release the button when finished");
+      } catch (error) {
+        if (requestEpoch !== micStartEpoch) return;
+        stopMic({ preserveStatus: true });
+        setDemoPhase("error", error.name === "NotAllowedError" ? "Microphone permission was not granted" : String(error.message || "Could not start microphone"));
+      } finally {
+        if (requestEpoch === micStartEpoch) starting = false;
+      }
+    }
+
+    function stopMic(options = {}) {
+      micStartEpoch += 1;
+      starting = false;
+      if (recognition) {
+        recognition.onend = null;
+        try { recognition.stop(); } catch (_) { }
+      }
+      recognition = undefined;
+      if (recorder && recorder.state !== "inactive") {
+        try { recorder.stop(); } catch (_) { }
+      }
+      recorder = undefined;
+      if (deepgramSocket?.readyState === WebSocket.OPEN) {
+        try { deepgramSocket.send(JSON.stringify({ type: "Finalize" })); } catch (_) { }
+        window.setTimeout(() => { try { deepgramSocket?.close(); } catch (_) { } }, 500);
+      } else if (deepgramSocket) {
+        try { deepgramSocket.close(); } catch (_) { }
+      }
+      deepgramSocket = undefined;
+      if (micStream) micStream.getTracks().forEach((track) => track.stop());
+      micStream = undefined;
+      stopMeter();
+      handsFree = false;
+      sessionMode = "";
+      interimTranscript = "";
+      renderTranscript();
+      if (!options.preserveStatus) {
+        setDemoPhase(finalTranscript.trim() ? "processing" : "idle", finalTranscript.trim() ? "Transcript complete; microphone is off" : "Microphone is off");
+        if (phaseResetTimer) window.clearTimeout(phaseResetTimer);
+        phaseResetTimer = window.setTimeout(() => {
+          phaseResetTimer = undefined;
+          if (!micStream && !starting) setDemoPhase("idle", "Microphone is off");
+        }, 520);
+      }
+    }
+
+    holdToTalk.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      holdToTalk.setPointerCapture?.(event.pointerId);
+      void startMic({ handsFree: false });
+    });
+    holdToTalk.addEventListener("pointerup", () => { if (!handsFree) stopMic(); });
+    holdToTalk.addEventListener("pointercancel", () => { if (!handsFree) stopMic(); });
+    holdToTalk.addEventListener("keydown", (event) => {
+      if ((event.code === "Space" || event.code === "Enter") && !event.repeat) { event.preventDefault(); void startMic({ handsFree: false }); }
+    });
+    holdToTalk.addEventListener("keyup", (event) => {
+      if (event.code === "Space" || event.code === "Enter") { event.preventDefault(); if (!handsFree) stopMic(); }
+    });
+    toggleDemo.addEventListener("click", () => { if (micStream) stopMic(); else void startMic({ handsFree: true }); });
+    stopDemo.addEventListener("click", () => stopMic());
+    clearTranscript.addEventListener("click", () => { finalTranscript = ""; interimTranscript = ""; renderTranscript(); });
+    copyTranscript.addEventListener("click", async () => {
+      if (!finalTranscript.trim()) return;
+      try { await navigator.clipboard.writeText(finalTranscript.trim()); copyTranscript.textContent = "Copied"; window.setTimeout(() => { copyTranscript.textContent = "Copy text"; }, 1200); }
+      catch (_) { copyTranscript.textContent = "Copy unavailable"; }
+    });
+    window.addEventListener("pagehide", stopMic);
+    document.addEventListener("visibilitychange", () => { if (document.hidden && micStream && !handsFree) stopMic(); });
+    renderTranscript();
+    setDemoPhase("idle", "Microphone is off");
+  </script>
+</body>
+</html>
