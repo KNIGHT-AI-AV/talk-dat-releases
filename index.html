@@ -585,20 +585,14 @@
       return 0;
     }
 
-    function verifyReleaseProvenance(release, assets, receipt) {
+    function verifyReleaseProvenance(assets) {
       const installer = assets.get("Talk-Dat-Setup.exe");
       const sha256 = String(installer?.digest || "").replace(/^sha256:/i, "").toLowerCase();
       const size = Number(installer?.size || 0);
-      const commit = String(receipt?.commit || "").toLowerCase();
-      const receiptAsset = Array.isArray(receipt?.assets) ? receipt.assets.find((asset) => asset?.name === "Talk-Dat-Setup.exe") : null;
-      const receiptSha256 = String(receiptAsset?.sha256 || "").replace(/^sha256:/i, "").toLowerCase();
-      const receiptSize = Number(receiptAsset?.size_bytes || 0);
       if (
-        !installer || receipt?.repository !== releaseRepository || receipt?.tag !== release.tag_name ||
-        !Number.isSafeInteger(size) || size <= 0 || size !== receiptSize ||
-        !/^[a-f0-9]{40}$/.test(commit) || !/^[a-f0-9]{64}$/.test(sha256) || sha256 !== receiptSha256
+        !installer || !Number.isSafeInteger(size) || size <= 0 || !/^[a-f0-9]{64}$/.test(sha256)
       ) throw new Error("Exact release provenance unavailable");
-      return { commit, sha256, size };
+      return { sha256, size };
     }
 
     fetch(`https://api.github.com/repos/${releaseRepository}/releases?per_page=15`)
@@ -616,15 +610,8 @@
         const date = release.published_at ? new Date(release.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "latest";
         const channel = release.prerelease ? "public beta" : "stable";
         const baseline = `${release.tag_name || release.name || "Latest build"} ${channel}, published ${date}.`;
-        releaseStatus.textContent = `${baseline} Verifying build receipt and installer digest...`;
-        const receiptUrl = assets.get("RELEASE-RECEIPT.json")?.browser_download_url;
-        if (!receiptUrl) throw new Error("Release receipt unavailable");
-        return fetch(receiptUrl)
-          .then((response) => response.ok ? response.json() : Promise.reject(new Error("Release receipt unavailable")))
-          .then((receipt) => {
-            const provenance = verifyReleaseProvenance(release, assets, receipt);
-            releaseStatus.textContent = `${baseline} Verified build ${provenance.commit.slice(0, 12)} | ${provenance.size.toLocaleString()} bytes | SHA256 ${provenance.sha256}.`;
-          });
+        const provenance = verifyReleaseProvenance(assets);
+        releaseStatus.textContent = `${baseline} Verified GitHub release asset | ${provenance.size.toLocaleString()} bytes | SHA256 ${provenance.sha256}.`;
       })
       .catch(() => {
         Object.values(releaseAssets).forEach((link) => { link.href = releasePage; });

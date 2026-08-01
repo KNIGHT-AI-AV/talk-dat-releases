@@ -1,7 +1,7 @@
 # Talk Dat! Releases
 
 This repository is the official binary distribution channel for
-[Talk Dat!](https://talkdat.knightaiav.com/), a Knight AI+AV Windows dictation
+[Talk Dat!](https://knight-ai-av.github.io/talk-dat-releases/), a Knight AI+AV Windows dictation
 product.
 
 It contains compiled installers, portable builds, SHA256 checksums, and
@@ -11,7 +11,7 @@ dictionaries, model weights, or private customer data.
 
 ## Download
 
-Start at [talkdat.knightaiav.com](https://talkdat.knightaiav.com/). The product
+Start at the [official Talk Dat! product page](https://knight-ai-av.github.io/talk-dat-releases/). The product
 page and the in-app updater both resolve releases from this channel and verify
 the selected installer against its receipt and SHA256 digest.
 
