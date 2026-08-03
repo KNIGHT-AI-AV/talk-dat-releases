@@ -62,14 +62,16 @@ async function api(path, body = undefined) {
 function renderEntitlement(value) {
   const plan = value?.plan || "none";
   const active = Boolean(value?.active);
-  entitlementTitle.textContent = plan === "lifetime" ? "Lifetime access" : plan === "pro" ? (active ? "Talk Dat! Pro" : "Pro needs attention") : plan === "trial" ? (active ? "Trial active" : "Trial ended") : "No trial or purchase yet";
+  entitlementTitle.textContent = value?.owner ? "Owner access" : plan === "lifetime" ? "Lifetime access" : plan === "pro" ? (active ? "Talk Dat! Pro" : "Pro needs attention") : plan === "trial" ? (active ? "Trial active" : "Trial ended") : "No trial or purchase yet";
   if (plan === "trial" && value.trialEndsAt) {
     entitlementDetail.textContent = `${active ? "Trial ends" : "Trial ended"} ${new Date(value.trialEndsAt).toLocaleDateString()}. Activate up to ${value.maxDevices || 3} PCs.`;
   } else if (plan === "lifetime") {
     entitlementDetail.textContent = `Core dictation is yours permanently. ${value.deviceCount || 0} of ${value.maxDevices || 3} PC activations used.`;
+  } else if (value?.owner) {
+    entitlementDetail.textContent = `Permanent unlimited managed access is active. ${value.deviceCount || 0} PCs connected.`;
   } else if (plan === "pro") {
     const renewal = value.subscriptionEndsAt ? new Date(value.subscriptionEndsAt).toLocaleDateString() : "your next billing date";
-    entitlementDetail.textContent = `${active ? "Pro is active" : "Pro is not active"} on the ${value.billingPeriod || "monthly"} plan through ${renewal}. ${value.deviceCount || 0} of ${value.maxDevices || 3} PC activations used.`;
+    entitlementDetail.textContent = `${active ? "Unlimited managed Pro is active" : "Pro is not active"} on the ${value.billingPeriod || "monthly"} plan through ${renewal}. ${value.deviceCount || 0} of ${value.maxDevices || 3} PC activations used.`;
   } else {
     entitlementDetail.textContent = "Start the no-card trial, subscribe to Pro, or purchase lifetime access.";
   }
