@@ -1,11 +1,12 @@
-# Talk Dat! Releases
+# Talk DAT! Releases
 
 This repository is the official binary distribution channel for
-[Talk Dat!](https://www.talkdat.app/), a Knight AI+AV Windows dictation
-product. It contains compiled installers, portable builds, SHA256 checksums, and
-machine-readable release receipts. It does **not** contain the proprietary
-Talk Dat! source code, API keys, user configuration, transcripts, recordings,
-dictionaries, model weights, or private customer data.
+[Talk DAT!](https://www.talkdat.app/), Knight AI+AV's dictation app for Windows and
+Mac. It contains compiled installers, portable builds, SHA256 checksums, and
+machine-readable release receipts. The Talk DAT! source code is open source under the Apache
+License 2.0 and lives at https://github.com/KNIGHT-AI-AV/talkdat. This repository holds no
+source code, API keys, user configuration, transcripts, recordings, dictionaries, model
+weights, or private customer data.
 
 This repository is public because the in-app updater checks it for new releases.
 That is its only job. It used to also host a second full copy of the customer
@@ -17,17 +18,19 @@ deploy runs.
 
 ## Download
 
-Start at the [official Talk Dat! product page](https://www.talkdat.app/),
+Start at the [official Talk DAT! product page](https://www.talkdat.app/),
 or use this repository's [Releases page](https://github.com/KNIGHT-AI-AV/talk-dat-releases/releases)
 directly. The product page and the in-app updater both resolve releases from this
 channel and verify the selected installer against its receipt and SHA256 digest.
 
 ## License
 
-Talk Dat! binaries are proprietary Knight AI+AV software and are provided under
-the End User License Agreement included with each build. Making an installer
-publicly downloadable does not grant source-code, redistribution, modification,
-or resale rights.
+The Talk DAT! source code is licensed under the Apache License 2.0. The binaries here are
+the official builds Knight AI+AV LLC makes from it, and each one comes with the End User
+License Agreement it carries. That agreement lets you install them on devices you own or
+control, for personal use or inside your organization, on as many of those devices as you
+like, and pass copies on unmodified. The Talk DAT! name, logo and other brand assets are
+Knight's trademarks and are not covered by either license.
 
 Third-party components retain their own licenses and notices inside each
 distribution.
