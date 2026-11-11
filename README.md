@@ -23,6 +23,10 @@ or use this repository's [Releases page](https://github.com/KNIGHT-AI-AV/talk-da
 directly. The product page and the in-app updater both resolve releases from this
 channel and verify the selected installer against its receipt and SHA256 digest.
 
+## Windows updates
+
+New Windows versions of Talk DAT! are released only in the Microsoft Store: https://apps.microsoft.com/detail/9NF64GDNBPF5. Version 0.4.178 is the last direct Windows installer here, and installs from it do not update to newer versions. To keep getting updates, install Talk DAT! from the Microsoft Store. Mac releases continue here.
+
 ## License
 
 The Talk DAT! source code is licensed under the Apache License 2.0. The binaries here are
